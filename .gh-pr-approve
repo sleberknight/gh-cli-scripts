@@ -5,7 +5,7 @@ repo=$2
 start_num=$3
 stop_num=$4
 
-for pr_num in $(seq ${start_num} ${stop_num}); do
+for pr_num in $(seq "${start_num}" "${stop_num}"); do
     echo "#${pr_num}:"
-    gh pr review --repo $org/$repo --approve $pr_num
+    gh pr review --repo "$org"/"$repo" --approve "$pr_num"
 done
