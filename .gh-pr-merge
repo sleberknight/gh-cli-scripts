@@ -1,0 +1,11 @@
+#!/bin/bash
+
+org=$1
+repo=$2
+start_num=$3
+stop_num=$4
+
+for pr_num in $(seq ${start_num} ${stop_num}); do
+    echo "#${pr_num}:"
+    gh pr merge --repo $org/$repo --squash --delete-branch --auto $pr_num
+done
