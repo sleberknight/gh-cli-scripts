@@ -6,7 +6,7 @@ start_num=$3
 stop_num=$4
 milestone=$5
 
-for pr_num in $(seq ${start_num} ${stop_num}); do
+for pr_num in $(seq "${start_num}" "${stop_num}"); do
     echo "#${pr_num}:"
-    gh pr edit --repo $org/$repo --milestone $milestone $pr_num
+    gh pr edit --repo "$org"/"$repo" --milestone "$milestone" "$pr_num"
 done
