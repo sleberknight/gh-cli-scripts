@@ -3,4 +3,4 @@
 org=$1
 repo=$2
 
-gh pr list --repo $org/$repo
+gh pr list --repo "$org"/"$repo"
