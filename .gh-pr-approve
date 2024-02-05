@@ -4,6 +4,15 @@ usage() {
     echo "Usage: $0 org repo start_num [stop_num]"
 }
 
+validate_arg() {
+    local arg_name="$1"
+    local arg_value="$2"
+    if [ -z "$arg_value" ]; then
+        echo "Error: $arg_name is required and cannot be empty." >&2
+        exit 1
+    fi
+}
+
 if [ $# -eq 0 ]; then
     usage
     exit 1
@@ -13,6 +22,11 @@ org=$1
 repo=$2
 start_num=$3
 stop_num=${4:-$start_num}
+
+validate_arg "org" $org
+validate_arg "repo" $repo
+validate_arg "start_num" $start_num
+validate_arg "stop_num" $stop_num
 
 for pr_num in $(seq "${start_num}" "${stop_num}"); do
     echo "#${pr_num}:"
