@@ -1,6 +1,16 @@
 #!/bin/bash
 
 org=$1
-repo=$2
 
-gh pr list --repo "$org"/"$repo"
+shift
+repos=("$@")
+
+if [ ${#repos[@]} -eq 0 ]; then
+  echo "Specify one or more repositories in the org, separated by spaces"
+  exit 1
+fi
+
+for repo in "${repos[@]}"; do
+  gh pr list --repo "$org"/"$repo"
+  echo
+done
