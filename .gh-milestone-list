@@ -1,6 +1,28 @@
 #!/bin/bash
 
 org=$1
-repo=$2
 
-gh api -H "Accept: application/vnd.github.v3+json" /repos/"$org"/"$repo"/milestones | jq -r '.[] | [.id, .number, .title] | @tsv'
+shift
+repos=("$@")
+
+if [ ${#repos[@]} -eq 0 ]; then
+  echo "Specify one or more repositories in the org, separated by spaces"
+  exit 1
+fi
+
+for repo in "${repos[@]}"; do
+  echo "Milestones in $repo:"
+  printf "%-12s %-10s %-10s\n" "ID" "Number" "Title"
+
+  api_result=$(gh api -H "Accept: application/vnd.github.v3+json" /repos/"$org"/"$repo"/milestones | jq -r '.[] | [.id, .number, .title] | @csv')
+
+  # The format of each line in api_result is: id,number,"version" for example 9846787,39,"4.0.0"
+  # There can be multiple milestones, so process each one separately
+  while IFS=',' read -r id number version; do
+    # Remove leading and trailing quote from the version
+    version="${version%\"}"
+    version="${version#\"}"
+    printf "%-12s %-10s %-10s\n" $id $number $version
+  done <<< "$api_result"
+  echo
+done
