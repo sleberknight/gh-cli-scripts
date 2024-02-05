@@ -1,5 +1,33 @@
 #!/bin/bash
 
+usage() {
+    echo "Usage: $0 [-a] [-h] org repo start_num [stop_num]"
+    echo "  -a Approve the PR before merging"
+    echo "  -h Display this help message and exit."
+}
+
+if [ $# -eq 0 ]; then
+    usage
+    exit 1
+fi
+
+# default values
+approve_pr=0
+
+while getopts "ah" opt; do
+  case $opt in
+  a)
+    approve_pr=1
+    ;;
+  h)
+    usage
+    exit 0
+    ;;
+  esac
+done
+
+shift $((OPTIND-1))
+
 org=$1
 repo=$2
 start_num=$3
@@ -7,5 +35,8 @@ stop_num=${4:-$start_num}
 
 for pr_num in $(seq "${start_num}" "${stop_num}"); do
     echo "#${pr_num}:"
+    if [[ approve_pr -eq 1 ]]; then
+      gh pr review --repo "$org"/"$repo" --approve "$pr_num"
+    fi
     gh pr merge --repo "$org"/"$repo" --squash --delete-branch --auto "$pr_num"
 done
