@@ -3,7 +3,7 @@
 org=$1
 repo=$2
 start_num=$3
-stop_num=$4
+stop_num=${4:-$start_num}
 
 for pr_num in $(seq "${start_num}" "${stop_num}"); do
     echo "#${pr_num}:"
