@@ -1,8 +1,9 @@
 #!/bin/bash
 
 usage() {
-    echo "Usage: $0 [-a] [-h] org repo start_num [stop_num]"
+    echo "Usage: $0 [-a] [-m milestone] [-h] org repo start_num [stop_num]"
     echo "  -a Approve the PR before merging"
+    echo "  -m Add the milestone to the PR"
     echo "  -h Display this help message and exit."
 }
 
@@ -13,11 +14,15 @@ fi
 
 # default values
 approve_pr=0
+milestone=""
 
-while getopts "ah" opt; do
+while getopts "ahm:" opt; do
   case $opt in
   a)
     approve_pr=1
+    ;;
+  m)
+    milestone=$OPTARG
     ;;
   h)
     usage
@@ -35,8 +40,15 @@ stop_num=${4:-$start_num}
 
 for pr_num in $(seq "${start_num}" "${stop_num}"); do
     echo "#${pr_num}:"
+
+    if [[ -n "$milestone" ]]; then
+      echo "Add milestone"
+      gh pr edit --repo "$org"/"$repo" --milestone "$milestone" "$pr_num"
+    fi
+
     if [[ approve_pr -eq 1 ]]; then
       gh pr review --repo "$org"/"$repo" --approve "$pr_num"
     fi
+
     gh pr merge --repo "$org"/"$repo" --squash --delete-branch --auto "$pr_num"
 done
