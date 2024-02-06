@@ -23,10 +23,10 @@ repo=$2
 start_num=$3
 stop_num=${4:-$start_num}
 
-validate_arg "org" $org
-validate_arg "repo" $repo
-validate_arg "start_num" $start_num
-validate_arg "stop_num" $stop_num
+validate_arg "org" "$org"
+validate_arg "repo" "$repo"
+validate_arg "start_num" "$start_num"
+validate_arg "stop_num" "$stop_num"
 
 for pr_num in $(seq "${start_num}" "${stop_num}"); do
     echo "#${pr_num}:"
