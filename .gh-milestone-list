@@ -4,6 +4,21 @@ usage() {
     echo "Usage: $0 org repo1 [repo2 repo3 ... repoN]"
 }
 
+while getopts "h" opt; do
+  case $opt in
+  h)
+    usage
+    exit 0
+    ;;
+  *)
+    usage
+    exit 1
+    ;;
+  esac
+done
+
+shift $((OPTIND-1))
+
 if [ $# -eq 0 ]; then
     usage
     exit 1
