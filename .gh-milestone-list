@@ -31,7 +31,7 @@ for repo in "${repos[@]}"; do
     # Remove leading and trailing quote from the version
     version="${version%\"}"
     version="${version#\"}"
-    printf "%-12s %-10s %-10s\n" $id $number $version
+    printf "%-12s %-10s %-10s\n" "$id" "$number" "$version"
   done <<< "$api_result"
   echo
 done
