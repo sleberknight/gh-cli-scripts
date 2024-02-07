@@ -1,0 +1,10 @@
+#!/bin/bash
+
+validate_arg() {
+    local arg_name="$1"
+    local arg_value="$2"
+    if [ -z "$arg_value" ]; then
+        echo "Error: $arg_name is required and cannot be empty." >&2
+        exit 1
+    fi
+}
