@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# This is an experimental  version of .gh-pr-list which infers
+# the org and repository from the directory structure if they
+# are not provided explicitly. It is named "beta" because it
+# might be overkill, i.e., since you can just do "gh pr list"
+# in whatever repository you're in. Whereas, the original point
+# of .gh-pr-list is to allow you to be anywhere and specify
+# an org and one or more repositories. Of course, you can
+# also just do gh pr list --repo org/repo (but you can't
+# specify multiple repositories).
+
+set -e
+
+usage() {
+    echo "Usage: $0 [org repo1] [repo2 repo3 ... repoN]"
+    echo
+    echo "If org and repo1 are not provided, they will be inferred from the directory structure."
+    echo "The parent directory will be inferred as the org, and the current directory as repo1."
+    echo "If the parent directory and current directory do not comprise a valid org/repo,"
+    echo "then the script will fail and exit with an error."
+    echo
+    echo "Examples:"
+    echo
+    echo "1. Explicit org and single repo"
+    echo "   $0 kiwiproject kiwi"
+    echo
+    echo "2. Explicit org and multiple repos"
+    echo "   $0 kiwiproject kiwi retrying-again service-discovery-client"
+    echo
+    echo "3. Inferred org and single repo"
+    echo "   $0"
+    echo
+}
+
+while getopts "h" opt; do
+  case $opt in
+  h)
+    usage
+    exit 0
+    ;;
+  *)
+    usage
+    exit 1
+    ;;
+  esac
+done
+
+shift $((OPTIND-1))
+
+if [ $# -eq 0 ]; then
+    echo "No organization or repos provided; inferring from directory structure..."
+    repo=$(basename "$PWD")
+    repos=("$repo")
+    org=$(basename "$(dirname "$PWD")")
+
+    echo "Using ${org} as the organization and ${repo} as repository"
+    echo
+else
+  org=$1
+
+  shift
+  repos=("$@")
+fi
+
+
+if [ ${#repos[@]} -eq 0 ]; then
+  echo "Specify one or more repositories in the org, separated by spaces"
+  exit 1
+fi
+
+for repo in "${repos[@]}"; do
+  gh pr list --repo "$org"/"$repo"
+  echo
+done
